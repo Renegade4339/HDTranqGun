@@ -8,7 +8,7 @@ class HDTranq : HDDrug{
 		let hdp=hdplayerpawn(owner);
 
 		double ret=min(0.1,amount*0.003);
-		hdp.A_Incapacitated( "none", 35 );
+		hdp.A_Incapacitated( 0, 35 );
 		hdp.AddBlackout(256,1,1,35);
 			if(
 				!countinv("HDStim")
