@@ -41,16 +41,6 @@ class HDTranq : HDDrug{
 			)hdp.bloodpressure+=3;
 		}
 
-		if(
-			hdp.beatmax>=HDCONST_MINHEARTTICS+3
-			&&hdp.fatigue<=HDCONST_SPRINTFATIGUE
-			&&hdp.health<hdp.healthcap+(amt>>4)
-			&&random(1,300)<amt
-		){
-			hdp.givebody(1);
-			if(hdp.fatigue>0)hdp.fatigue--;
-		}
-
 		if(hd_debug>=4)console.printf("TRANQ "..amt.."/"..HDTRANQ_MAX.."  = ");
 	}
 }
