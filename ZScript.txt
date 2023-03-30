@@ -1,0 +1,56 @@
+//the droog
+class HDTranq : HDDrug{
+	enum TranqAmounts{
+		HDTRANQ_DOSE=400,
+		HDTRANQ_MAX=480,
+	}
+	override void doeffect(){
+		let hdp=hdplayerpawn(owner);
+
+		double ret=min(0.1,amount*0.003);
+			if(
+				!countinv("HDStim")
+				||!(level.time&(1|2|4))
+			){
+				if(hdp.stunned<40)hdp.stunned+=3;
+				if(hdp.fatigue<HDCONST_SPRINTFATIGUE)hdp.fatigue++;
+        A_TakeInventory("HDTranq",random(2,6));
+			}
+	}
+	override void OnHeartbeat(hdplayerpawn hdp){
+		if(amount<1)return;
+		int amt=amount;amount--;
+		hdp.A_Incapacitated( "none", 35 );
+    hdp.AddBlackout(256,1,1,35);
+		if(amt>HDTRANQ_MAX){
+
+			if(hdp.beatcap>max(6,20-(amount>>5)))hdp.beatcap--;
+
+			if(hdp.stunned<10)hdp.stunned+=2;
+
+			if(
+				hdp.bloodpressure<50-(hdp.bloodloss>>4)
+			)hdp.bloodpressure+=4;
+
+		}else{
+
+			if(hdp.beatcap>30)hdp.beatcap--;
+
+			if(
+				hdp.bloodpressure<14-(hdp.bloodloss>>4)
+			)hdp.bloodpressure+=3;
+		}
+
+		if(
+			hdp.beatmax>=HDCONST_MINHEARTTICS+3
+			&&hdp.fatigue<=HDCONST_SPRINTFATIGUE
+			&&hdp.health<hdp.healthcap+(amt>>4)
+			&&random(1,300)<amt
+		){
+			hdp.givebody(1);
+			if(hdp.fatigue>0)hdp.fatigue--;
+		}
+
+		if(hd_debug>=4)console.printf("TRANQ "..amt.."/"..HDTRANQ_MAX.."  = ");
+	}
+}
