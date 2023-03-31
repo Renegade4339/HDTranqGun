@@ -1,4 +1,18 @@
 //the droog
+class InjectTranqDummy:IdleDummy{
+	hdplayerpawn tg;
+	hdmobbase tg2;
+	states{
+	spawn:
+		TNT1 A 30 nodelay{
+			tg=HDPlayerPawn(target);
+			if(!tg||tg.bkilled){destroy();return;}
+		}
+		TNT1 A 1{
+			if(!target||target.bkilled){destroy();return;}
+			HDF.Give(target,"HDTranq",HDTranq.HDTRANQ_DOSE);
+		}stop;
+	}
 class HDTranq : HDDrug{
 	enum TranqAmounts{
 		HDTRANQ_DOSE=400,
@@ -8,6 +22,67 @@ class HDTranq : HDDrug{
 		let hdp=hdplayerpawn(owner);
 
 		double ret=min(0.1,amount*0.003);
+		if(!deathmatch){
+		hdp.A_Incapacitated( 0, 35 );
+		hdp.AddBlackout(256,1,1,35);
+		}
+			if(
+				countinv("HDZerk")>HDZerk.HDZERK_COOLOFF
+			){
+				destroy();
+				return;
+			}
+			if(
+				countinv("HDStim")
+				||!(level.time&(1|2|4))
+			){
+				if(hdp.stunned<40)hdp.stunned+=3;
+				if(hdp.fatigue<HDCONST_SPRINTFATIGUE)hdp.fatigue++;
+				hdp.A_TakeInventory("HDTranq",random(2,6));
+			}
+	}
+	override void OnHeartbeat(hdplayerpawn hdp){
+		if(amount<1)return;
+		int amt=amount;amount--;
+		if(deathmatch){
+		if(hdp.stunned<40)hdp.stunned+=3;
+		if(hdp.fatigue<HDCONST_SPRINTFATIGUE)hdp.fatigue++;
+		}
+		if(amt>HDTRANQ_MAX){
+
+			if(hdp.beatcap>max(6,20-(amount>>5)))hdp.beatcap--;
+
+			if(hdp.stunned<10)hdp.stunned+=2;
+
+			if(
+				hdp.bloodpressure<50-(hdp.bloodloss>>4)
+			)hdp.bloodpressure+=4;
+
+		}else{
+
+			if(hdp.beatcap>30)hdp.beatcap--;
+
+			if(
+				hdp.bloodpressure<14-(hdp.bloodloss>>4)
+			)hdp.bloodpressure+=3;
+		}
+
+		if(hd_debug>=4)console.printf("TRANQ "..amt.."/"..HDTRANQ_MAX.."  = ");
+	}
+}
+
+//droog, for mobs
+class HDTranq2 : Inventory{
+	override void doeffect(){
+		let hdmb=hdmobbase(owner);
+		let hdp=hdplayerpawn(owner);
+
+		if(hdp){
+			int droogs=countinv("HDTranq2");
+			hdp.A_GiveInventory("HDTranq",droogs); //failsafe should this be given to players, intentional or not
+			destroy();
+			return;
+		}
 		if(!deathmatch){
 		hdp.A_Incapacitated( 0, 35 );
 		hdp.AddBlackout(256,1,1,35);
