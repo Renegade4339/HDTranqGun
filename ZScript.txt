@@ -11,12 +11,18 @@ class HDTranq : HDDrug{
 		hdp.A_Incapacitated( 0, 35 );
 		hdp.AddBlackout(256,1,1,35);
 			if(
-				!countinv("HDStim")
+				countinv("HDZerk")
+			){
+			destroy();
+			return;
+			}
+			if(
+				countinv("HDStim")
 				||!(level.time&(1|2|4))
 			){
 				if(hdp.stunned<40)hdp.stunned+=3;
 				if(hdp.fatigue<HDCONST_SPRINTFATIGUE)hdp.fatigue++;
-        A_TakeInventory("HDTranq",random(2,6));
+				hdp.A_TakeInventory("HDTranq",random(2,6));
 			}
 	}
 	override void OnHeartbeat(hdplayerpawn hdp){
