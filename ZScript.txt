@@ -11,10 +11,10 @@ class HDTranq : HDDrug{
 		hdp.A_Incapacitated( 0, 35 );
 		hdp.AddBlackout(256,1,1,35);
 			if(
-				countinv("HDZerk")
+				countinv("HDZerk")>HDZerk.HDZERK_COOLOFF
 			){
-			destroy();
-			return;
+				destroy();
+				return;
 			}
 			if(
 				countinv("HDStim")
