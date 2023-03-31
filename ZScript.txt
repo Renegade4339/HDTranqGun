@@ -73,6 +73,11 @@ class HDTranq : HDDrug{
 
 //droog, for mobs
 class HDTranq2 : Inventory{
+	default{
+		+inventory.undroppable
+		-inventory.invbar
+		inventory.maxamount 1000000;
+	}
 	override void doeffect(){
 		let hdmb=hdmobbase(owner);
 		let hdp=hdplayerpawn(owner);
@@ -83,51 +88,26 @@ class HDTranq2 : Inventory{
 			destroy();
 			return;
 		}
-		if(!deathmatch){
-		hdp.A_Incapacitated( 0, 35 );
-		hdp.AddBlackout(256,1,1,35);
-		}
+			if(HDMobBase(owner){
+			if(HDMobBase(owner) 
+			&& !HDMobBase(owner).bNOINCAP 
+			&& hitactor.health>0
+			&& hitactor.ResolveState("falldown")
+			&& !hitactor.InStateSequence
+			(owner.CurState,owner.ResolveState("falldown"))
+  				){
+				owner.SetStateLabel("falldown");
+    				if(HDMobBase(owner).stunned<35)HDMobBase(owner).stunned=35; //nighty night	
+   			 }
+
+			if(!(level.time&(1|2|4)))owner.A_TakeInventory("HDTranq",1);
+
 			if(
-				countinv("HDZerk")>HDZerk.HDZERK_COOLOFF
-			){
-				destroy();
-				return;
-			}
-			if(
-				countinv("HDStim")
+				countinv("HDTranq")>HDTranq.HDTRANQ_MAX
 				||!(level.time&(1|2|4))
 			){
-				if(hdp.stunned<40)hdp.stunned+=3;
-				if(hdp.fatigue<HDCONST_SPRINTFATIGUE)hdp.fatigue++;
-				hdp.A_TakeInventory("HDTranq",random(2,6));
+				if(HDMobBase(owner).health>0)HDMobBase(owner).stunned+=4;
 			}
-	}
-	override void OnHeartbeat(hdplayerpawn hdp){
-		if(amount<1)return;
-		int amt=amount;amount--;
-		if(deathmatch){
-		if(hdp.stunned<40)hdp.stunned+=3;
-		if(hdp.fatigue<HDCONST_SPRINTFATIGUE)hdp.fatigue++;
 		}
-		if(amt>HDTRANQ_MAX){
-
-			if(hdp.beatcap>max(6,20-(amount>>5)))hdp.beatcap--;
-
-			if(hdp.stunned<10)hdp.stunned+=2;
-
-			if(
-				hdp.bloodpressure<50-(hdp.bloodloss>>4)
-			)hdp.bloodpressure+=4;
-
-		}else{
-
-			if(hdp.beatcap>30)hdp.beatcap--;
-
-			if(
-				hdp.bloodpressure<14-(hdp.bloodloss>>4)
-			)hdp.bloodpressure+=3;
-		}
-
-		if(hd_debug>=4)console.printf("TRANQ "..amt.."/"..HDTRANQ_MAX.."  = ");
 	}
 }
