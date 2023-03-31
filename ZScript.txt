@@ -8,8 +8,10 @@ class HDTranq : HDDrug{
 		let hdp=hdplayerpawn(owner);
 
 		double ret=min(0.1,amount*0.003);
+		if(!deathmatch){
 		hdp.A_Incapacitated( 0, 35 );
 		hdp.AddBlackout(256,1,1,35);
+		}
 			if(
 				countinv("HDZerk")>HDZerk.HDZERK_COOLOFF
 			){
@@ -28,6 +30,10 @@ class HDTranq : HDDrug{
 	override void OnHeartbeat(hdplayerpawn hdp){
 		if(amount<1)return;
 		int amt=amount;amount--;
+		if(deathmatch){
+		if(hdp.stunned<40)hdp.stunned+=3;
+		if(hdp.fatigue<HDCONST_SPRINTFATIGUE)hdp.fatigue++;
+		}
 		if(amt>HDTRANQ_MAX){
 
 			if(hdp.beatcap>max(6,20-(amount>>5)))hdp.beatcap--;
