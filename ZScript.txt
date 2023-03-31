@@ -6,11 +6,13 @@ class InjectTranqDummy:IdleDummy{
 	spawn:
 		TNT1 A 30 nodelay{
 			tg=HDPlayerPawn(target);
-			if(!tg||tg.bkilled){destroy();return;}
+			tg2=HDMobBase(target);
+			if(!tg||tg.bkilled||!tg2||tg2.bkilled){destroy();return;}
 		}
 		TNT1 A 1{
 			if(!target||target.bkilled){destroy();return;}
-			HDF.Give(target,"HDTranq",HDTranq.HDTRANQ_DOSE);
+			if(tg)HDF.Give(target,"HDTranq",HDTranq.HDTRANQ_DOSE);
+			if(tg2)A_GiveToTarget("HDTranq2",HDTranq.HDTRANQ_DOSE);
 		}stop;
 	}
 class HDTranq : HDDrug{
