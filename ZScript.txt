@@ -1,3 +1,76 @@
+//rocket grenades moment, may change
+class DartBase:SlowProjectile{
+	bool isrocket;
+	string sedativetype;
+	stringe sedativedebristype;
+	property sedative:sedativetype;
+	property sedativedebristype:sedativedebristype;
+	default{
+		-noextremedeath -noteleport +bloodlessimpact
+		height 2; radius 2; scale 0.33;
+		speed HDCONST_MPSTODUPT*76;
+		mass 150; accuracy 0; woundhealth 0;
+		obituary "%o was darted by %k.";
+	}
+	override void postbeginplay(){
+		super.postbeginplay();
+		A_ChangeVelocity(speed*cos(pitch),0,speed*sin(-pitch),CVF_RELATIVE);
+	}
+	override void ExplodeSlowMissile(line blockingline,actor blockingobject){
+		if(max(abs(skypos.x),abs(skypos.y))>=32768){destroy();return;}
+		bmissile=false;
+	}
+	
+	action void A_BounceOff(){
+			//bounce
+			if(speed>50)painsound="misc/punch";else painsound="misc/fragknock";
+			actor a=spawn("IdleDummy",pos,ALLOW_REPLACE);
+			a.stamina=10;a.A_StartSound(painsound,CHAN_AUTO);
+			let ddd=(sedativedebristype.spawn(self.sedativedebristype,pos-(cos(pitch)*(cos(angle),sin(angle)),sin(-pitch))));
+			if(ddd){
+				ddd.target=target;
+				ddd.tracer=tracer;
+				ddd.master=master;
+				ddd.angle=angle;
+				ddd.pitch=pitch;
+				ddd.vel=vel*0.3;
+			}
+			destroy();
+			return;
+		}
+	states{
+	spawn:
+		TNT1 A 1;
+		stop;
+	
+	spawndart:
+		---- A -1;
+		stop;
+	death:
+        ---- A 1{
+            if(tracer){
+                tracer.damagemobj(self,target,random(1,4),"piercing",DMG_NO_ARMOR);
+ 		actor a=spawn(self.sedativetype,pos,ALLOW_REPLACE);
+		a.accuracy=40;a.target=tracer;
+                    }else{
+                        A_BounceOff();
+            }
+        }
+	/*
+        TNT1 A 1{
+            if(random(0,2)){
+                let blt=HDSBoltAmmo.spawn("HDSBoltAmmo",pos-(vel*2));
+                if(!tracer){
+                    blt.bnogravity=true;
+                    blt.bflatsprite=true;
+                    blt.angle=angle;blt.pitch=pitch;
+                }
+            }
+        }*/
+        stop;
+	}
+}
+
 //the droog
 class InjectTranqDummy:IdleDummy{
 	hdplayerpawn tg;
