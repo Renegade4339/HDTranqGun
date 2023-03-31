@@ -88,6 +88,10 @@ class HDTranq2 : Inventory{
 			destroy();
 			return;
 		}
+			//from melodica's melonades, specifically
+			//t h e  r o c k
+			//code actually from swampie's LL rounds
+			//from the bullet lib 
 			if(HDMobBase(owner){
 			if(HDMobBase(owner) 
 			&& !HDMobBase(owner).bNOINCAP 
