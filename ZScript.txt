@@ -4,7 +4,7 @@ class DoomImpSedative:DoomimpBall{
         ---- A 1{
             if(tracer){
                 //tracer.damagemobj(self,target,random(1,4),"piercing",DMG_NO_ARMOR);
- 		actor a=spawn(InjectTranqDummy,pos,ALLOW_REPLACE);
+ 		actor a=spawn("InjectTranqDummy",pos,ALLOW_REPLACE);
 		a.accuracy=40;a.target=tracer;
                     }
         }
