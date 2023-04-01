@@ -187,9 +187,9 @@ class HDTranq2 : Inventory{
 			if(HDMobBase(owner)){
 			if(HDMobBase(owner) 
 			&& !HDMobBase(owner).bNOINCAP 
-			&& hitactor.health>0
-			&& hitactor.ResolveState("falldown")
-			&& !hitactor.InStateSequence
+			&& owner.health>0
+			&& owner.ResolveState("falldown")
+			&& !owner.InStateSequence
 			(owner.CurState,owner.ResolveState("falldown"))
   				){
 				owner.SetStateLabel("falldown");
