@@ -101,7 +101,7 @@ class InjectTranqDummy:IdleDummy{
 		TNT1 A 1{
 			if(!target||target.bkilled){destroy();return;}
 			if(tg)HDF.Give(target,"HDTranq",HDTranq.HDTRANQ_DOSE);
-			if(tg2)A_GiveToTarget("HDTranq2",HDTranq.HDTRANQ_DOSE);
+			if(tg2)tg2.A_GiveInventory("HDTranq2",HDTranq.HDTRANQ_DOSE);
 		}stop;
 	}
 	}
