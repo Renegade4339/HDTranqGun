@@ -10,7 +10,7 @@ class DoomImpSedative:DoomimpBall{
         }
 	goto super::death;
 	}
-]
+}
 
 /*
 //rocket grenades moment, may change
