@@ -82,7 +82,7 @@ class DartBase:SlowProjectile{
                 }
             }
         }*/
-        stop;
+        //stop;
 	}
 }
 */
