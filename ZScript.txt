@@ -1,3 +1,18 @@
+class DoomImpSedative:DoomimpBall{
+	states{
+	death:
+        ---- A 1{
+            if(tracer){
+                //tracer.damagemobj(self,target,random(1,4),"piercing",DMG_NO_ARMOR);
+ 		actor a=spawn(InjectTranqDummy,pos,ALLOW_REPLACE);
+		a.accuracy=40;a.target=tracer;
+                    }
+        }
+	goto super::death;
+	}
+]
+
+/*
 //rocket grenades moment, may change
 class DartBase:SlowProjectile{
 	bool isrocket;
@@ -70,6 +85,7 @@ class DartBase:SlowProjectile{
         stop;
 	}
 }
+*/
 
 //the droog
 class InjectTranqDummy:IdleDummy{
