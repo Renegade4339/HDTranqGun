@@ -179,7 +179,7 @@ class HDTranq2 : Inventory{
 		if(hdp){
 			int droogs=countinv("HDTranq2");
 			hdp.A_GiveInventory("HDTranq",droogs); //failsafe should this be given to players, intentional or not
-			destroy();
+			invoker.destroy();
 			return;
 		}
 			//from melodica's melonades, specifically
