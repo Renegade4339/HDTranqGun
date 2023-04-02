@@ -96,7 +96,8 @@ class InjectTranqDummy:IdleDummy{
 		TNT1 A 30 nodelay{
 			tg=HDPlayerPawn(target);
 			tg2=HDMobBase(target);
-			if(!tg||tg.bkilled||!tg2||tg2.bkilled){destroy();return;}
+			if(tg){if(!tg||tg.bkilled){destroy();return;}}
+			if(tg2){if(!tg||tg2.bkilled){destroy();return;}}
 		}
 		TNT1 A 1{
 			if(!target||target.bkilled){destroy();return;}
@@ -121,7 +122,7 @@ class HDTranq : HDDrug{
 			if(
 				countinv("HDZerk")>HDZerk.HDZERK_COOLOFF
 			){
-				destroy();
+				invoker.destroy();
 				return;
 			}
 			if(
@@ -131,6 +132,7 @@ class HDTranq : HDDrug{
 				if(hdp.stunned<40)hdp.stunned+=3;
 				if(hdp.fatigue<HDCONST_SPRINTFATIGUE)hdp.fatigue++;
 				hdp.A_TakeInventory("HDTranq",random(2,6));
+				hdp.A_TakeInventory("HDStim",random(4,12));
 			}
 	}
 	override void OnHeartbeat(hdplayerpawn hdp){
