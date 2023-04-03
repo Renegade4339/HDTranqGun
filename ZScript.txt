@@ -1,4 +1,7 @@
 class DoomImpSedative:DoomimpBall{
+	default{
+		+SEEKERMISSILE
+	}
 	states{
 	death:
         ---- A 1{
@@ -9,6 +12,34 @@ class DoomImpSedative:DoomimpBall{
                     }
         }
 	goto super::death;
+	}
+}
+
+class HDTranqWep:HDCheatWep{
+	default{
+		weapon.slotnumber 0;
+		hdweapon.refid "trq";
+		tag "monster sedater (cheat!)";
+	}
+	states{
+	ready:
+		TNT1 A 1 A_WeaponReady();
+		goto readyend;
+	fire:
+		TNT1 A 0{
+			flinetracedata rlt;
+			LineTrace(
+				angle,128,pitch,
+				TRF_ALLACTORS,
+				offsetz:height-6,
+				data:rlt
+			);
+			if(rlt.hitactor){
+				a_weaponmessage(rlt.hitactor.getclassname().." sedated!",30);
+				actor a=spawn("InjectTranqDummy",pos,ALLOW_REPLACE);
+			a.accuracy=40;a.target=rlt.hitactor;
+			}else a_weaponmessage("click on something\nto sedate it.",25);
+		}goto nope;
 	}
 }
 
@@ -96,13 +127,16 @@ class InjectTranqDummy:IdleDummy{
 		TNT1 A 30 nodelay{
 			tg=HDPlayerPawn(target);
 			tg2=HDMobBase(target);
+			/*
 			if(tg){if(!tg||tg.bkilled){destroy();return;}}
 			if(tg2){if(!tg||tg2.bkilled){destroy();return;}}
+			*/
 		}
 		TNT1 A 1{
+			A_SpawnItemEx("SpentStim");
 			if(!target||target.bkilled){destroy();return;}
 			if(tg)HDF.Give(target,"HDTranq",HDTranq.HDTRANQ_DOSE);
-			if(tg2)tg2.A_GiveInventory("HDTranq2",HDTranq.HDTRANQ_DOSE);
+			if(tg2)tg2.A_GiveInventory("HDTranq2",400);
 		}stop;
 	}
 	}
@@ -122,7 +156,7 @@ class HDTranq : HDDrug{
 			if(
 				countinv("HDZerk")>HDZerk.HDZERK_COOLOFF
 			){
-				invoker.destroy();
+				hdp.A_TakeInventory("HDTranq",99999999);
 				return;
 			}
 			if(
@@ -152,13 +186,6 @@ class HDTranq : HDDrug{
 				hdp.bloodpressure<50-(hdp.bloodloss>>4)
 			)hdp.bloodpressure+=4;
 
-		}else{
-
-			if(hdp.beatcap>30)hdp.beatcap--;
-
-			if(
-				hdp.bloodpressure<14-(hdp.bloodloss>>4)
-			)hdp.bloodpressure+=3;
 		}
 
 		if(hd_debug>=4)console.printf("TRANQ "..amt.."/"..HDTRANQ_MAX.."  = ");
@@ -179,7 +206,7 @@ class HDTranq2 : Inventory{
 		if(hdp){
 			int droogs=countinv("HDTranq2");
 			hdp.A_GiveInventory("HDTranq",droogs); //failsafe should this be given to players, intentional or not
-			invoker.destroy();
+			self.destroy();
 			return;
 		}
 			//from melodica's melonades, specifically
@@ -195,7 +222,16 @@ class HDTranq2 : Inventory{
 			(owner.CurState,owner.ResolveState("falldown"))
   				){
 				owner.SetStateLabel("falldown");
-    				if(HDMobBase(owner).stunned<35)HDMobBase(owner).stunned=35; //nighty night	
+    				if(HDMobBase(owner).stunned<=35)HDMobBase(owner).stunned=35; //nighty night	
+   			 }
+			if(HDMobBase(owner) 
+			&& !HDMobBase(owner).bNOINCAP 
+			&& owner.health>0
+			&& owner.ResolveState("falldown")
+			&& owner.InStateSequence
+			(owner.CurState,owner.ResolveState("falldown"))
+  				){
+    				if(HDMobBase(owner).stunned<=35)HDMobBase(owner).stunned=35;
    			 }
 
 			if(!(level.time&(1|2|4)))owner.A_TakeInventory("HDTranq",1);
